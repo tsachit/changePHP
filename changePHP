@@ -1,0 +1,13 @@
+phpversion=$(php -v | grep --only-matching --perl-regexp "PHP \\d+\.\\d+" | cut -c5- )
+
+if [ "$phpversion" = "$1" ]
+then
+	printf "\033[1;31m Current version of PHP is already $phpversion \033[0m\n"
+else
+	printf "\033[1;31m Current version of PHP is $phpversion \033[0m\n"
+	sudo a2dismod php$phpversion 
+	sudo a2enmod php$1 
+	(sudo rm /usr/bin/php && sudo ln -s /usr/bin/php$1 /usr/bin/php) 
+	sudo service apache2 restart
+	printf "\033[1;31m PHP version changed to $1 \033[0m\n"
+fi
